@@ -1,3 +1,5 @@
 {
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "buildCommand": "npm run build -w packages/frontend",
+  "outputDirectory": "packages/frontend/.next"
 }
