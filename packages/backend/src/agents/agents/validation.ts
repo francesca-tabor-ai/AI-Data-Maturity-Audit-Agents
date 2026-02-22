@@ -7,7 +7,9 @@ export class ValidationAgent extends BaseAgent {
 
   async execute(taskId: string, context: AgentContext): Promise<Record<string, unknown>> {
     return this.runTask(taskId, context, async () => {
-      const signals = Array.from(context.signals.entries()).map(([k, v]) => ({ agent: k, ...v }));
+      const signals = Array.from(context.signals.entries()).map(([k, v]) =>
+        ({ agent: k, ...v }) as { agent: string; confidence?: number }
+      );
       const avgConfidence =
         signals.length > 0
           ? signals.reduce((a, s) => a + ((s.confidence as number) ?? 0), 0) / signals.length
