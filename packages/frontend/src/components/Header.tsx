@@ -1,8 +1,18 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 export function Header() {
+  const [user, setUser] = useState<{ email: string; role: string } | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const u = localStorage.getItem('user');
+      setUser(u ? JSON.parse(u) : null);
+    }
+  }, []);
+
   return (
     <header
       className="header"
@@ -23,12 +33,29 @@ export function Header() {
           <Link href="/case-studies" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
             Case Studies
           </Link>
+          <Link href="/marketplace" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
+            Marketplace
+          </Link>
           <Link href="/pricing" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
             Pricing
           </Link>
           <Link href="/contact" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
             Contact
           </Link>
+          {user ? (
+            <>
+              {user.role === 'admin' && (
+                <Link href="/admin" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
+                  Admin
+                </Link>
+              )}
+              <span className="label-muted">{user.email}</span>
+            </>
+          ) : (
+            <Link href="/login" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
+              Log in
+            </Link>
+          )}
           <Link href="/analyze" className="btn" style={{ textDecoration: 'none' }}>
             Analyze
           </Link>

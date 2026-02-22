@@ -49,13 +49,13 @@ export class CoordinatorAgent extends BaseAgent {
     return this.runTask(taskId, context, async () => {
       const analysisId = context.analysisId;
 
-      store.analyses.update(analysisId, { status: 'running' });
+      await store.analyses.update(analysisId, { status: 'running' });
 
       const signals = new Map<string, Record<string, unknown>>();
       let companyProfile = context.companyProfile;
 
       for (const agentId of AGENT_ORDER) {
-        const task = enqueueTask(analysisId, agentId, AGENT_NAMES[agentId], { companyProfile });
+        const task = await enqueueTask(analysisId, agentId, AGENT_NAMES[agentId], { companyProfile });
         const output = await this.executeAgent(agentId, task.id, {
           ...context,
           companyProfile,
@@ -67,7 +67,7 @@ export class CoordinatorAgent extends BaseAgent {
         }
       }
 
-      store.analyses.update(analysisId, { status: 'completed', completed_at: new Date().toISOString() });
+      await store.analyses.update(analysisId, { status: 'completed', completed_at: new Date().toISOString() });
 
       return { success: true, signalsCompleted: AGENT_ORDER.length };
     });

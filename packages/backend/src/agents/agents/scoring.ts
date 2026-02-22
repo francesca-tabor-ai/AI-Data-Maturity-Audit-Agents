@@ -31,8 +31,7 @@ export class ScoringAgent extends BaseAgent {
       const analysisId = context.analysisId;
 
       for (const [dim, score] of Object.entries({ data, ai, alignment, innovation })) {
-        store.scores.upsert({
-          id: `${analysisId}-${dim}`,
+        await store.scores.upsert({
           analysis_id: analysisId,
           dimension: dim,
           score: score as number,
@@ -40,7 +39,7 @@ export class ScoringAgent extends BaseAgent {
         });
       }
 
-      store.analyses.update(analysisId, {
+      await store.analyses.update(analysisId, {
         classification,
         risk_level: 'medium',
         revenue_upside: 15,

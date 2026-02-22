@@ -4,6 +4,8 @@ import { createServer } from 'http';
 import { WebSocketServer } from 'ws';
 import { analysisRouter } from './routes/analysis.js';
 import { agentRouter } from './routes/agents.js';
+import { authRouter } from './routes/auth.js';
+import { adminRouter } from './routes/admin.js';
 import { companiesRouter } from './routes/companies.js';
 import { orchestrator } from './orchestrator-instance.js';
 
@@ -24,8 +26,10 @@ app.use(express.json());
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
+app.use('/api/auth', authRouter);
 app.use('/api/companies', companiesRouter);
 app.use('/api/analyses', analysisRouter);
 app.use('/api/agents', agentRouter);
+app.use('/api/admin', adminRouter);
 
 export { server };

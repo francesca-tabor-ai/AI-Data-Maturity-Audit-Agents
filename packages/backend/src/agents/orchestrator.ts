@@ -47,14 +47,14 @@ export class Orchestrator {
   }
 
   async startAnalysis(companyId: string, companyName: string, domain?: string): Promise<string> {
-    const company = store.companies.getById(companyId);
+    const company = await store.companies.getById(companyId);
     const profile = company?.profile_json ? JSON.parse(company.profile_json) : { name: companyName, domain };
 
     const analysisId = uuid();
-    store.analyses.insert({ id: analysisId, company_id: companyId, status: 'queued' });
+    await store.analyses.insert({ id: analysisId, company_id: companyId, status: 'queued' });
 
     const coordTask = uuid();
-    store.agentTasks.insert({
+    await store.agentTasks.insert({
       id: coordTask,
       analysis_id: analysisId,
       agent_id: 'coordinator',
@@ -70,9 +70,9 @@ export class Orchestrator {
     };
 
     setImmediate(() => {
-      this.coordinator.execute(coordTask, ctx).catch((err) => {
+      this.coordinator.execute(coordTask, ctx).catch(async (err) => {
         console.error('Orchestrator error:', err);
-        store.analyses.update(analysisId, { status: 'failed' });
+        await store.analyses.update(analysisId, { status: 'failed' });
       });
     });
 

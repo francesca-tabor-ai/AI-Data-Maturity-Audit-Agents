@@ -30,16 +30,16 @@ export abstract class BaseAgent {
     fn: () => Promise<Record<string, unknown>>
   ): Promise<Record<string, unknown>> {
     this.emit({ type: 'task_start', payload: { taskId } });
-    updateTaskStatus(taskId, 'running');
+    await updateTaskStatus(taskId, 'running');
 
     try {
       const output = await fn();
-      updateTaskStatus(taskId, 'completed', output, output.confidence as number);
+      await updateTaskStatus(taskId, 'completed', output, output.confidence as number);
       this.emit({ type: 'task_complete', payload: { taskId, output } });
       return output;
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      updateTaskStatus(taskId, 'failed', undefined, undefined, message);
+      await updateTaskStatus(taskId, 'failed', undefined, undefined, message);
       this.emit({ type: 'task_failed', payload: { taskId, error: message } });
       throw err;
     }

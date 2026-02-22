@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Source_Sans_3 } from 'next/font/google';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { ChatWidget } from '@/components/ChatWidget';
+import { Footer } from '@/components/Footer';
 import './globals.css';
 
 const sourceSans = Source_Sans_3({
@@ -22,9 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={sourceSans.variable}>
-      <body className={sourceSans.className}>
+      <body className={sourceSans.className} style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
         <ScrollToTop />
-        {children}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          {children}
+          <Footer />
+        </div>
         <ChatWidget />
       </body>
     </html>

@@ -1,14 +1,14 @@
 import { store, uuid } from '../db/client.js';
 import type { AgentId, AgentTask, TaskStatus } from './types.js';
 
-export function enqueueTask(
+export async function enqueueTask(
   analysisId: string,
   agentId: AgentId,
   agentName: string,
   inputData?: Record<string, unknown>
-): AgentTask {
+): Promise<AgentTask> {
   const id = uuid();
-  store.agentTasks.insert({
+  await store.agentTasks.insert({
     id,
     analysis_id: analysisId,
     agent_id: agentId,
@@ -28,27 +28,27 @@ export function enqueueTask(
   };
 }
 
-export function getPendingTasks(analysisId: string): AgentTask[] {
-  const rows = store.agentTasks.getPending(analysisId);
+export async function getPendingTasks(analysisId: string): Promise<AgentTask[]> {
+  const rows = await store.agentTasks.getPending(analysisId);
   return rows.map(rowToTask);
 }
 
-export function updateTaskStatus(
+export async function updateTaskStatus(
   taskId: string,
   status: TaskStatus,
   outputData?: Record<string, unknown>,
   confidence?: number,
   errorMessage?: string
-): void {
+): Promise<void> {
   const now = new Date().toISOString();
   if (status === 'running') {
-    store.agentTasks.update(taskId, {
+    await store.agentTasks.update(taskId, {
       status,
       output_data: outputData ? JSON.stringify(outputData) : undefined,
       started_at: now,
     });
   } else {
-    store.agentTasks.update(taskId, {
+    await store.agentTasks.update(taskId, {
       status,
       output_data: outputData ? JSON.stringify(outputData) : undefined,
       confidence,
@@ -58,12 +58,25 @@ export function updateTaskStatus(
   }
 }
 
-export function getTasksForAnalysis(analysisId: string): AgentTask[] {
-  const rows = store.agentTasks.getByAnalysisId(analysisId);
+export async function getTasksForAnalysis(analysisId: string): Promise<AgentTask[]> {
+  const rows = await store.agentTasks.getByAnalysisId(analysisId);
   return rows.map(rowToTask);
 }
 
-function rowToTask(row: { id: string; analysis_id: string; agent_id: string; agent_name: string; status: string; input_data?: string; output_data?: string; confidence?: number; error_message?: string; started_at?: string; completed_at?: string; created_at: string }): AgentTask {
+function rowToTask(row: {
+  id: string;
+  analysis_id: string;
+  agent_id: string;
+  agent_name: string;
+  status: string;
+  input_data?: string;
+  output_data?: string;
+  confidence?: number;
+  error_message?: string;
+  started_at?: string;
+  completed_at?: string;
+  created_at: string;
+}): AgentTask {
   return {
     id: row.id,
     analysisId: row.analysis_id,

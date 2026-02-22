@@ -3,8 +3,14 @@ import { ScoringAgent } from '../agents/scoring.js';
 import { store } from '../../db/client.js';
 
 describe('ScoringAgent', () => {
-  beforeEach(() => {
-    store.analyses.insert({ id: 'test-1', company_id: 'c1', status: 'running' });
+  beforeEach(async () => {
+    const company = await store.companies.getById('c1');
+    if (!company) await store.companies.insert({ id: 'c1', name: 'Test Co', domain: 'test.com' });
+    try {
+      await store.analyses.insert({ id: 'test-1', company_id: 'c1', status: 'running' });
+    } catch {
+      // may already exist from previous run
+    }
   });
 
   it('maps synthesis scores to classification', async () => {
