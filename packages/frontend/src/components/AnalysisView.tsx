@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Header } from '@/components/Header';
+import { MaturityChart } from '@/components/MaturityChart';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 const WS_BASE = process.env.NEXT_PUBLIC_WS_URL ?? 'http://localhost:3001';
@@ -170,6 +171,11 @@ export function AnalysisView({ id }: { id: string }) {
             <h2 className="headline-3" style={{ marginBottom: 'var(--space-lg)' }}>
               Maturity scores
             </h2>
+            {Object.keys(scores).length >= 2 && (
+              <div style={{ marginBottom: 'var(--space-xl)' }}>
+                <MaturityChart scores={scores} />
+              </div>
+            )}
             <div
               style={{
                 display: 'grid',
