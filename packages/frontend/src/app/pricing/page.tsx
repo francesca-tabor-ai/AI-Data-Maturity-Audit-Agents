@@ -57,7 +57,7 @@ const PLANS = [
       'SLA guarantees',
     ],
     cta: 'Contact sales',
-    href: '#contact',
+    href: '/contact',
     highlighted: false,
   },
 ];

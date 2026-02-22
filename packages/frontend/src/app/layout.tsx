@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Source_Sans_3 } from 'next/font/google';
 import { ScrollToTop } from '@/components/ScrollToTop';
+import { ChatWidget } from '@/components/ChatWidget';
 import './globals.css';
 
 const sourceSans = Source_Sans_3({
@@ -24,6 +25,7 @@ export default function RootLayout({
       <body className={sourceSans.className}>
         <ScrollToTop />
         {children}
+        <ChatWidget />
       </body>
     </html>
   );

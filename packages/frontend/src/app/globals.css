@@ -347,6 +347,12 @@ body {
   50% { opacity: 1; }
 }
 
+/* Chat widget typing indicator */
+@keyframes chat-typing-dot {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
 /* Logo marquee - infinite scroll */
 .logo-marquee {
   overflow: hidden;

@@ -26,6 +26,9 @@ export function Header() {
           <Link href="/pricing" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
             Pricing
           </Link>
+          <Link href="/contact" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
+            Contact
+          </Link>
           <Link href="/analyze" className="btn" style={{ textDecoration: 'none' }}>
             Analyze
           </Link>
