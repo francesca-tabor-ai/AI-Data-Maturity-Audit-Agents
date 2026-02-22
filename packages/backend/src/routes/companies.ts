@@ -32,9 +32,17 @@ companiesRouter.get('/:id', async (req, res) => {
   try {
     const row = await store.companies.getById(req.params.id);
     if (!row) return res.status(404).json({ error: 'Company not found' });
+    let profile: unknown = null;
+    if (row.profile_json) {
+      try {
+        profile = JSON.parse(row.profile_json);
+      } catch {
+        profile = null;
+      }
+    }
     res.json({
       ...row,
-      profile: row.profile_json ? JSON.parse(row.profile_json) : null,
+      profile,
     });
   } catch (err) {
     res.status(500).json({ error: err instanceof Error ? err.message : 'Database error' });

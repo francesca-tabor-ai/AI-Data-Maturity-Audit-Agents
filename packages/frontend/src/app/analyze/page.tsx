@@ -14,13 +14,19 @@ export default function AnalyzePage() {
   const [error, setError] = useState<string | null>(null);
 
   const startAnalysis = async () => {
+    const trimmedName = companyName.trim();
+    const trimmedDomain = domain.trim();
+    if (!trimmedName && !trimmedDomain) {
+      setError('Enter at least a company name or domain.');
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`${API}/api/analyses`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ companyName: companyName || 'Unknown', domain: domain || '' }),
+        body: JSON.stringify({ companyName: trimmedName || 'Unknown', domain: trimmedDomain || '' }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Failed to start analysis');

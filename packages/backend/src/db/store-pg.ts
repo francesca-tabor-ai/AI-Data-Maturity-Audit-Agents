@@ -50,14 +50,13 @@ interface Score {
   created_at: string;
 }
 
-function toIso(row: { created_at?: Date; updated_at?: Date; completed_at?: Date; started_at?: Date }) {
-  return {
-    ...row,
-    created_at: row.created_at?.toISOString?.() ?? row.created_at,
-    updated_at: row.updated_at?.toISOString?.() ?? row.updated_at,
-    completed_at: row.completed_at?.toISOString?.() ?? row.completed_at,
-    started_at: row.started_at?.toISOString?.() ?? row.started_at,
-  };
+function toIso<T extends Record<string, unknown>>(row: T): T {
+  const out = { ...row };
+  if (row.created_at instanceof Date) (out as Record<string, unknown>).created_at = row.created_at.toISOString();
+  if (row.updated_at instanceof Date) (out as Record<string, unknown>).updated_at = row.updated_at.toISOString();
+  if (row.completed_at instanceof Date) (out as Record<string, unknown>).completed_at = row.completed_at.toISOString();
+  if (row.started_at instanceof Date) (out as Record<string, unknown>).started_at = row.started_at.toISOString();
+  return out as T;
 }
 
 export const store = {

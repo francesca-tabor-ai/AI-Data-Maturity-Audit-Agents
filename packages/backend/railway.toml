@@ -1,0 +1,10 @@
+# Railway deployment config for backend
+# Set Root Directory to "packages/backend" in Railway project settings
+
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm run start"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3

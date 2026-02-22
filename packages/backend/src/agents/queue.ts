@@ -63,6 +63,15 @@ export async function getTasksForAnalysis(analysisId: string): Promise<AgentTask
   return rows.map(rowToTask);
 }
 
+function safeJsonParse<T>(s: string | null | undefined): T | undefined {
+  if (!s) return undefined;
+  try {
+    return JSON.parse(s) as T;
+  } catch {
+    return undefined;
+  }
+}
+
 function rowToTask(row: {
   id: string;
   analysis_id: string;
@@ -83,8 +92,8 @@ function rowToTask(row: {
     agentId: row.agent_id as AgentId,
     agentName: row.agent_name,
     status: row.status as TaskStatus,
-    inputData: row.input_data ? JSON.parse(row.input_data) : undefined,
-    outputData: row.output_data ? JSON.parse(row.output_data) : undefined,
+    inputData: safeJsonParse(row.input_data),
+    outputData: safeJsonParse(row.output_data),
     confidence: row.confidence,
     errorMessage: row.error_message,
     startedAt: row.started_at,

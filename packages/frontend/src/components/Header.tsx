@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export function Header() {
+  const router = useRouter();
   const [user, setUser] = useState<{ email: string; role: string } | null>(null);
 
   useEffect(() => {
@@ -12,6 +14,13 @@ export function Header() {
       setUser(u ? JSON.parse(u) : null);
     }
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    router.push('/');
+  };
 
   return (
     <header
@@ -45,11 +54,19 @@ export function Header() {
           {user ? (
             <>
               {user.role === 'admin' && (
-                <Link href="/admin" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>
+                <Link href="/admin" className="body-muted link-interactive" style={{ textDecoration: 'none', fontWeight: 600 }}>
                   Admin
                 </Link>
               )}
               <span className="label-muted">{user.email}</span>
+              <button
+                onClick={handleLogout}
+                type="button"
+                style={{ background: 'none', border: 'none', color: 'var(--color-text-secondary)', cursor: 'pointer', fontSize: '0.875rem' }}
+                className="link-interactive"
+              >
+                Log out
+              </button>
             </>
           ) : (
             <Link href="/login" className="body-muted link-interactive" style={{ textDecoration: 'none' }}>

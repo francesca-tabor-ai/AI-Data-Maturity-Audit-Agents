@@ -43,14 +43,18 @@ export default function AdminPage() {
     fetch(`${API}/api/admin/${entity}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => {
-        if (r.status === 401 || r.status === 403) router.push('/login');
-        return r.json();
+      .then(async (r) => {
+        if (r.status === 401 || r.status === 403) {
+          router.push('/login');
+          return null;
+        }
+        const d = await r.json().catch(() => ({}));
+        return d;
       })
       .then((d) => {
-        setData(d.data ?? []);
+        if (d !== null) setData(d.data ?? []);
       })
-      .catch((e) => setError(e.message))
+      .catch((e) => setError(e instanceof Error ? e.message : 'Request failed'))
       .finally(() => setLoading(false));
   }, [entity, router]);
 

@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Header } from '@/components/Header';
 
 const API = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
-const WS_URL = (process.env.NEXT_PUBLIC_WS_URL ?? 'ws://localhost:3001').replace(/^http/, 'ws');
+const WS_BASE = process.env.NEXT_PUBLIC_WS_URL ?? 'http://localhost:3001';
+const WS_URL = WS_BASE.startsWith('https') ? WS_BASE.replace(/^https/, 'wss') : WS_BASE.replace(/^http/, 'ws');
 
 interface Task {
   id: string;
@@ -29,6 +31,7 @@ export function AnalysisView({ id }: { id: string }) {
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [wsConnected, setWsConnected] = useState(false);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,7 +39,12 @@ export function AnalysisView({ id }: { id: string }) {
         fetch(`${API}/api/analyses/${id}`),
         fetch(`${API}/api/agents/tasks?analysisId=${id}`),
       ]);
-      if (aRes.ok) setAnalysis(await aRes.json());
+      if (aRes.ok) {
+        setAnalysis(await aRes.json());
+        setNotFound(false);
+      } else if (aRes.status === 404) {
+        setNotFound(true);
+      }
       if (tRes.ok) {
         const { tasks: t } = await tRes.json();
         setTasks(t ?? []);
@@ -77,6 +85,21 @@ export function AnalysisView({ id }: { id: string }) {
     return () => ws.close();
   }, [id]);
 
+  if (notFound) {
+    return (
+      <div style={{ padding: 'var(--space-2xl)', minHeight: '100vh' }}>
+        <Header />
+        <main style={{ padding: 'var(--space-2xl)', maxWidth: 560, margin: '0 auto', textAlign: 'center' }}>
+          <h1 className="headline-2" style={{ marginBottom: 'var(--space-md)' }}>Analysis not found</h1>
+          <p className="body-muted">The requested analysis does not exist or may have been removed.</p>
+          <Link href="/analyze" className="btn" style={{ marginTop: 'var(--space-lg)', display: 'inline-block', textDecoration: 'none' }}>
+            Start new analysis
+          </Link>
+        </main>
+      </div>
+    );
+  }
+
   if (!analysis)
     return (
       <div
@@ -86,7 +109,8 @@ export function AnalysisView({ id }: { id: string }) {
           minHeight: '100vh',
         }}
       >
-        <p className="body-muted">Loading…</p>
+        <Header />
+        <p className="body-muted" style={{ padding: 'var(--space-2xl)' }}>Loading…</p>
       </div>
     );
 
