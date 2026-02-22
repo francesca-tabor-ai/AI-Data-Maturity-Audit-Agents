@@ -1,20 +1,19 @@
 # Vercel Deployment
 
-This is a monorepo with the Next.js app in `packages/frontend`. To fix the ".next not found" error:
+This is a monorepo. The Next.js app lives in `packages/frontend`. Vercel must use that folder as the project root.
 
-## Option A: Set Root Directory (recommended)
+## Fix: Set Root Directory (required)
 
-1. [Vercel Dashboard](https://vercel.com/dashboard) → your project → **Settings** → **General**
-2. Find **Root Directory** → click **Edit**
-3. Enter: `packages/frontend`
-4. Click **Save**
-5. **Deployments** → ⋮ on latest deployment → **Redeploy**
+The `outputDirectory` in `vercel.json` does not override where the Next.js framework looks. You **must** set Root Directory in the Vercel dashboard:
 
-## Option B: Clear Output Directory override
+1. Go to [vercel.com/dashboard](https://vercel.com/dashboard)
+2. Click your project (**AI-Data-Maturity-Audit-Agents** or similar)
+3. Click **Settings** (top nav)
+4. In the left sidebar, click **General**
+5. Scroll to **Root Directory**
+6. Click **Edit** (or the pencil icon)
+7. Enter exactly: `packages/frontend`
+8. Click **Save**
+9. Go to **Deployments** → click ⋮ on the latest → **Redeploy**
 
-If **Root Directory** is left at the repo root, ensure **Output Directory** is not overriding:
-
-1. **Settings** → **General** → **Build & Development Settings**
-2. Find **Output Directory** – if it shows `.next`, **clear it** (leave empty)
-3. The `vercel.json` in this repo sets `outputDirectory` to `packages/frontend/.next`
-4. Redeploy
+After redeploy, `.next` will be at `packages/frontend/.next` (the project root), and the build will succeed.
